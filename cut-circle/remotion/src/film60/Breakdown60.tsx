@@ -2,6 +2,7 @@ import React from "react";
 import { HITS60 } from "./timeline60";
 import { enter, leave } from "../lib/motion";
 import { FONTS, PALETTE } from "../lib/theme";
+import { InkWash } from "../components/InkWash";
 import { VerticalText } from "../components/VerticalText";
 
 /**
@@ -17,9 +18,15 @@ export const Breakdown60: React.FC<{ frame: number }> = ({ frame }) => {
   const formula =
     enter(frame, HITS60.breakdownFormula, 6) *
     leave(frame, HITS60.silence - 3, 5);
+  // Keep the 96-side label through the build pickup; the 192 hero takes over
+  // at 18.1s, so the 16.5–18.1s gap is not an empty frame.
+  const countLabel =
+    enter(frame, HITS60.breakdown, 8) * leave(frame, HITS60.d192 - 4, 4);
 
   return (
     <>
+      <InkWash cx={1510} cy={320} size={520} opacity={0.55 * heading} />
+
       <div
         style={{
           position: "absolute",
@@ -38,6 +45,21 @@ export const Breakdown60: React.FC<{ frame: number }> = ({ frame }) => {
           weight={600}
           letterSpacing={14}
         />
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 1450,
+          top: 500,
+          opacity: countLabel,
+          fontFamily: FONTS.serif,
+          fontSize: 34,
+          letterSpacing: 4,
+          color: PALETTE.inkSoft,
+        }}
+      >
+        96 边 · 正多边形
       </div>
 
       <div

@@ -2,6 +2,7 @@ import React from "react";
 import { HITS60 } from "./timeline60";
 import { enter } from "../lib/motion";
 import { FONTS, PALETTE } from "../lib/theme";
+import { InkWash } from "../components/InkWash";
 import { Seal } from "../components/Seal";
 import { VerticalText } from "../components/VerticalText";
 
@@ -18,6 +19,8 @@ export const Quote60: React.FC<{ frame: number }> = ({ frame }) => {
 
   return (
     <>
+      <InkWash cx={1260} cy={700} size={520} opacity={0.4 * seal} />
+
       {columns.map((c) => (
         <div
           key={c.text}

@@ -2,6 +2,7 @@ import React from "react";
 import { HITS60 } from "./timeline60";
 import { enter, leave } from "../lib/motion";
 import { FONTS, PALETTE } from "../lib/theme";
+import { InkWash } from "../components/InkWash";
 
 /** 263 → 500 → 1424: the record holds for nearly nine hundred years. */
 export const History60: React.FC<{ frame: number }> = ({ frame }) => {
@@ -10,6 +11,8 @@ export const History60: React.FC<{ frame: number }> = ({ frame }) => {
 
   return (
     <div style={{ position: "absolute", inset: 0, opacity }}>
+      <InkWash cx={1200} cy={320} size={560} opacity={0.5} />
+
       <div
         style={{
           position: "absolute",

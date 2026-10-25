@@ -2,6 +2,7 @@ import React from "react";
 import { HITS60 } from "./timeline60";
 import { enter, leave, slam } from "../lib/motion";
 import { FONTS, PALETTE } from "../lib/theme";
+import { InkWash } from "../components/InkWash";
 
 /** 355/113, the 密率, with the decimal and the lost method. */
 export const Fraction60: React.FC<{ frame: number }> = ({ frame }) => {
@@ -19,6 +20,8 @@ export const Fraction60: React.FC<{ frame: number }> = ({ frame }) => {
         transformOrigin: "60% 45%",
       }}
     >
+      <InkWash cx={1320} cy={400} size={660} opacity={0.5} />
+
       <div
         style={{
           position: "absolute",
@@ -69,7 +72,9 @@ export const Fraction60: React.FC<{ frame: number }> = ({ frame }) => {
           fontVariantNumeric: "tabular-nums",
         }}
       >
-        ≈ 3.141592920…
+        <span style={{ color: PALETTE.inkFaint }}>≈ </span>
+        <span style={{ color: PALETTE.ink }}>3.141592</span>
+        <span style={{ color: PALETTE.inkFaint }}>920…</span>
       </div>
 
       <div

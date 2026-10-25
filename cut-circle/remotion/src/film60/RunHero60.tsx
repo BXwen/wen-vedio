@@ -2,6 +2,7 @@ import React from "react";
 import { HITS60, sideAtFrame60, stepAtFrame60 } from "./timeline60";
 import { enter, leave, slam } from "../lib/motion";
 import { FONTS, PALETTE } from "../lib/theme";
+import { InkWash } from "../components/InkWash";
 
 /**
  * 20.2s: 3.14 lands. 22.4s onward: the side count becomes the hero while 3.14
@@ -13,20 +14,23 @@ export const RunHero60: React.FC<{ frame: number }> = ({ frame }) => {
   // The big 3.1416 is a stage prop: it leaves on the beat that starts the
   // bounds. A cross-dissolve here would stack two large numbers on top of
   // each other for six frames.
-  const result = frame < HITS60.bounds ? enter(frame, HITS60.result, 6) : 0;
+  const result = frame < HITS60.bound ? enter(frame, HITS60.result, 6) : 0;
 
   const n = sideAtFrame60(frame) ?? 3072;
   const at = stepAtFrame60(frame);
   const stepIn = enter(frame, at, 4);
   const scale = 1 + 0.1 * (1 - stepIn);
+  const wash = Math.max(three14, run, result);
 
   return (
     <>
+      <InkWash cx={1280} cy={330} size={620} opacity={0.5 * wash} />
+
       <div
         style={{
           position: "absolute",
           left: 1130,
-          top: 300,
+          top: 190,
           opacity: three14,
           transform: `scale(${1 + 0.16 * slam(frame, HITS60.three14, 9)})`,
           transformOrigin: "left center",
@@ -35,7 +39,7 @@ export const RunHero60: React.FC<{ frame: number }> = ({ frame }) => {
         <div
           style={{
             fontFamily: FONTS.serif,
-            fontSize: 230,
+            fontSize: 100,
             fontWeight: 600,
             lineHeight: 1,
             letterSpacing: 2,
@@ -47,9 +51,9 @@ export const RunHero60: React.FC<{ frame: number }> = ({ frame }) => {
         </div>
         <div
           style={{
-            marginTop: 16,
+            marginTop: 10,
             height: 3,
-            width: 500,
+            width: 260,
             backgroundColor: PALETTE.seal,
             transform: `scaleX(${enter(frame, HITS60.three14 + 2, 9)})`,
             transformOrigin: "left center",
@@ -58,14 +62,36 @@ export const RunHero60: React.FC<{ frame: number }> = ({ frame }) => {
         />
         <div
           style={{
-            marginTop: 22,
+            marginTop: 26,
+            display: "flex",
+            alignItems: "baseline",
+            gap: 12,
+            fontFamily: FONTS.serif,
+            color: PALETTE.ink,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 210,
+              fontWeight: 600,
+              lineHeight: 1,
+              fontVariantNumeric: "tabular-nums",
+            }}
+          >
+            192
+          </span>
+          <span style={{ fontSize: 40, color: PALETTE.inkSoft }}>边</span>
+        </div>
+        <div
+          style={{
+            marginTop: 16,
             fontFamily: FONTS.serif,
             fontSize: 25,
             letterSpacing: 3,
             color: PALETTE.inkSoft,
           }}
         >
-          192 边 · 刘徽
+          刘徽 · 192 觚
         </div>
       </div>
 

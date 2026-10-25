@@ -22,6 +22,7 @@ import { DoublingLadder } from "../components/DoublingLadder";
 import { SideHero60 } from "./SideHero60";
 import { Breakdown60 } from "./Breakdown60";
 import { RunHero60 } from "./RunHero60";
+import { Error60 } from "./Error60";
 import { Bound60 } from "./Bound60";
 import { Fraction60 } from "./Fraction60";
 import { History60 } from "./History60";
@@ -78,19 +79,17 @@ export const Film60: React.FC = () => {
     pulse(frame, HITS60.hexagon, 6) * 0.65,
     pulse(frame, HITS60.three14, 6) * 0.6,
     pulse(frame, HITS60.result, 6) * 1.0,
-    pulse(frame, HITS60.bounds, 6) * 0.4,
+    pulse(frame, HITS60.bound, 6) * 0.4,
     pulse(frame, HITS60.fraction, 6) * 0.7,
     pulse(frame, HITS60.seal, 6) * 0.8,
   );
 
   const sagittaOpacity =
-    enter(frame, HITS60.d48, 8) * leave(frame, HITS60.result, 8);
+    enter(frame, HITS60.d48, 8) * leave(frame, HITS60.errorStart, 8);
   const loupeOpacity =
-    enter(frame, HITS60.bound, 8) *
-    leave(frame, HITS60.bounds - 1, 3);
+    enter(frame, HITS60.errorStart, 8) * leave(frame, HITS60.result, 8);
   const outerOpacity =
-    enter(frame, HITS60.bound, 8) *
-    leave(frame, HITS60.bounds - 1, 3);
+    enter(frame, HITS60.errorStart, 8) * leave(frame, HITS60.result, 8);
 
   return (
     <AbsoluteFill style={{ backgroundColor: PALETTE.paper }}>
@@ -189,8 +188,8 @@ export const Film60: React.FC = () => {
           cy={720}
           r={150}
           opacity={loupeOpacity}
-          startFrame={HITS60.bound}
-          endFrame={HITS60.bounds - 2}
+          startFrame={HITS60.errorStart}
+          endFrame={HITS60.errorEnd - 2}
         />
       </svg>
 
@@ -198,6 +197,7 @@ export const Film60: React.FC = () => {
       <SideHero60 frame={frame} sideCount={sideCount} />
       <Breakdown60 frame={frame} />
       <RunHero60 frame={frame} />
+      <Error60 frame={frame} />
       <Bound60 frame={frame} />
       <Fraction60 frame={frame} />
       <History60 frame={frame} />
@@ -210,7 +210,7 @@ export const Film60: React.FC = () => {
       <DoublingLadder
         frame={frame}
         sideCount={sideCount}
-        fadeOutAt={HITS60.bound}
+        fadeOutAt={HITS60.errorStart}
       />
 
       <AbsoluteFill

@@ -8,8 +8,11 @@ export const DURATION_IN_FRAMES = 1800;
  *
  * Measured section changes:
  *   0.0–12.0   first groove
- *  12.0–16.5   breakdown, nearly silent at 15.5
+ *   9.6        "逼近" heading lands on the last accent before the breakdown
+ *  12.0–16.5   music breakdown, nearly silent at 15.5
  *  16.5–31.5   build
+ *  17.0–22.4   count pops 192 → 3072
+ *  24.5–28.7   inner/outer error at 3072
  *  31.7         drop / strongest onsets of the minute
  *  34.0–50.0   groove
  *  50.0–60.0   outro
@@ -29,29 +32,34 @@ export const HITS60 = {
   d24: 161,
   d48: 193,
   d96: 225,
-  breakdown: 360,
-  breakdownText: 390,
-  breakdownFormula: 420,
+  // The 96-gon lands at 7.49s; don't hold it for four seconds. The heading
+  // enters on the 9.61s accent, and the line/formula land with the music drop.
+  breakdown: 288,
+  breakdownText: 360,
+  breakdownFormula: 390,
   silence: 465,
   build: 495,
-  three14: 607,
-  d384: 671,
-  d768: 735,
-  d1536: 798,
-  d3072: 862,
+  d192: 512,
+  three14: 512,
+  d384: 544,
+  d768: 575,
+  d1536: 607,
+  d3072: 671,
+  errorStart: 735,
+  errorFormula: 798,
+  errorEnd: 862,
   hold: 926,
   result: 950,
   bound: 1035,
-  error: 1118,
-  bounds: 1245,
-  boundMid: 1277,
-  boundUpper: 1309,
+  boundMid: 1118,
+  boundUpper: 1182,
+  precision: 1245,
   fraction: 1372,
   history: 1436,
   quote1: 1500,
   quote2: 1532,
-  quote3: 1627,
-  quote4: 1660,
+  quote3: 1572,
+  quote4: 1611,
   seal: 1692,
   holdEnd: 1755,
   end: 1800,
@@ -63,7 +71,7 @@ export const SIDES60 = [
   { at: HITS60.d24, n: 24 },
   { at: HITS60.d48, n: 48 },
   { at: HITS60.d96, n: 96 },
-  { at: HITS60.build, n: 192 },
+  { at: HITS60.d192, n: 192 },
   { at: HITS60.d384, n: 384 },
   { at: HITS60.d768, n: 768 },
   { at: HITS60.d1536, n: 1536 },

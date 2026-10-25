@@ -3,54 +3,21 @@ import { HITS60 } from "./timeline60";
 import { enter, leave } from "../lib/motion";
 import { FONTS, PALETTE } from "../lib/theme";
 
-/** Inner/outer squeeze, then Zu's two bounds. */
+/** Zu's two bounds, after the 3072-gon has already given 3.1416. */
 export const Bound60: React.FC<{ frame: number }> = ({ frame }) => {
-  const note =
-    enter(frame, HITS60.bound, 8) *
-    leave(frame, HITS60.bounds - 1, 3);
-  const formula =
-    enter(frame, HITS60.error, 8) *
-    leave(frame, HITS60.bounds - 1, 3);
-  const lower = enter(frame, HITS60.bounds, 6);
+  const lower = enter(frame, HITS60.bound, 6);
   const middle = enter(frame, HITS60.boundMid, 6);
   const upper = enter(frame, HITS60.boundUpper, 6);
+  const attribution =
+    enter(frame, HITS60.boundUpper, 6) *
+    leave(frame, HITS60.fraction - 4, 4);
+  const precision =
+    enter(frame, HITS60.precision, 6) *
+    leave(frame, HITS60.fraction - 4, 4);
   const fadeBounds = leave(frame, HITS60.fraction - 4, 4);
 
   return (
     <>
-      <div
-        style={{
-          position: "absolute",
-          left: 170,
-          top: 140,
-          opacity: note,
-          fontFamily: FONTS.serif,
-          fontSize: 52,
-          lineHeight: 1.5,
-          letterSpacing: 4,
-          color: PALETTE.ink,
-        }}
-      >
-        内接不足
-        <br />
-        外切有余
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          left: 172,
-          top: 308,
-          opacity: formula,
-          fontFamily: FONTS.serif,
-          fontSize: 28,
-          letterSpacing: 2,
-          color: PALETTE.inkSoft,
-        }}
-      >
-        误差 ∝ 1/n²
-      </div>
-
       <div
         style={{
           position: "absolute",
@@ -76,6 +43,36 @@ export const Bound60: React.FC<{ frame: number }> = ({ frame }) => {
           &lt; π &lt;
         </div>
         <div style={{ fontSize: 88, opacity: upper }}>3.1415927</div>
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 1110,
+          top: 620,
+          opacity: precision,
+          fontFamily: FONTS.serif,
+          fontSize: 30,
+          letterSpacing: 1.5,
+          color: PALETTE.inkSoft,
+        }}
+      >
+        误差 &lt; 10⁻⁷
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 1110,
+          top: 704,
+          opacity: attribution,
+          fontFamily: FONTS.serif,
+          fontSize: 26,
+          letterSpacing: 2,
+          color: PALETTE.inkSoft,
+        }}
+      >
+        祖冲之 · 429–500
       </div>
     </>
   );

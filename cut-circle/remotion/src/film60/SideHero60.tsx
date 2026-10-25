@@ -10,14 +10,11 @@ export const SideHero60: React.FC<{
 }> = ({ frame, sideCount }) => {
   if (sideCount === null) return null;
 
+  // Only 6–96 live here. The 192 milestone lands with 3.14 in RunHero60.
   const opacity =
     frame < HITS60.breakdown
       ? enter(frame, HITS60.hexagon, 8) * leave(frame, HITS60.breakdown - 4, 5)
-      : frame < HITS60.build
-        ? 0
-        : frame < HITS60.three14
-          ? enter(frame, HITS60.build, 5) * leave(frame, HITS60.three14 - 4, 4)
-          : 0;
+      : 0;
 
   if (opacity <= 0.001) return null;
 
@@ -25,7 +22,6 @@ export const SideHero60: React.FC<{
   const stepIn = enter(frame, at, 4);
   const scale = 1 + 0.08 * (1 - stepIn);
   const isFirst = sideCount === 6;
-  const is192 = sideCount === 192;
 
   return (
     <div
@@ -98,7 +94,7 @@ export const SideHero60: React.FC<{
           color: PALETTE.inkFaint,
         }}
       >
-        {is192 ? "刘徽 · 192 觚" : "每次翻一倍"}
+        每次翻一倍
       </div>
 
       {isFirst && (
