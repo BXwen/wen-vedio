@@ -21,7 +21,8 @@
   },
   "scripts": {
     "dev": "remotion studio",
-    "render": "remotion render CutCircle60 out/cut-circle-60.mp4",
+    "render": "remotion render CutCircleLong out/cut-circle-long.mp4",
+    "render:60": "remotion render CutCircle60 out/cut-circle-60.mp4",
     "render:demo": "remotion render CutCircleDemo out/cut-circle-demo.mp4",
     "lint": "tsc"
   }

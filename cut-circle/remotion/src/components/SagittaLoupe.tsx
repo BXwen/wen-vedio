@@ -3,10 +3,10 @@ import { interpolate } from "remotion";
 import { FONTS, PALETTE } from "../lib/theme";
 
 /**
- * Magnified view of one edge: the arc above, the chord below, and the sagitta
- * between them. The gap is schematic but shrinks as the side count grows, so
- * the middle of the film keeps a visible quantity even after the polygon has
- * become indistinguishable from the circle at full scale.
+ * A local crop of one edge, magnified until the chord spans the window. The
+ * caption doubles with the side count (12 sides → ×2, 3072 sides → ×512) while
+ * the crescent between arc and chord thins. The gap is exaggerated and labeled
+ * 示意: at 3072 sides the real sagitta is far below one pixel.
  */
 export const SagittaLoupe: React.FC<{
   cx: number;
@@ -14,10 +14,37 @@ export const SagittaLoupe: React.FC<{
   r: number;
   n: number;
   opacity: number;
-}> = ({ cx, cy, r, n, opacity }) => {
-  const gap = Math.max(7, 46 * Math.pow(24 / Math.max(24, n), 0.38));
-  const half = r * 0.82;
-  const labels = interpolate(gap, [8, 18], [0, 1], {
+  /** 1 on the frame a doubling lands; used for the magnification stamp. */
+  pop?: number;
+}> = ({ cx, cy, r, n, opacity, pop = 0 }) => {
+  const halfChord = r * 0.86;
+  // The true sagitta at 3072 sides is sub-pixel, so the window would go blank.
+  // Keep the crescent legible but let it thin monotonically with every double.
+  const gap = 46 * Math.pow(12 / Math.max(12, n), 0.33);
+  const R = (halfChord * halfChord + gap * gap) / (2 * gap);
+  // Chord endpoints sit on the fitting circle at ±phi from the apex, so the
+  // neighbouring vertices one edge further sit at ±3phi.
+  const phi = Math.atan2(halfChord, R - gap);
+  // At high n the crop is a thin band, so sink the apex to keep the window
+  // balanced instead of leaving its lower half empty. Low n stays put and
+  // lets the neighbouring edges run out of the lens.
+  const neighborDrop = R * (1 - Math.cos(3 * phi));
+  const apexY = cy - Math.min(neighborDrop, r * 1.1) / 2;
+  const centerY = apexY + R;
+  const yChord = apexY + gap;
+  const x1 = cx - halfChord;
+  const x2 = cx + halfChord;
+  const leftX = cx + R * Math.sin(-3 * phi);
+  const rightX = cx + R * Math.sin(3 * phi);
+  const belowY = centerY - R * Math.cos(3 * phi);
+  const zoom = Math.max(2, Math.round(n / 6));
+  // 矢高 needs vertical room between the two lines; 弧/弦 sit clear of the
+  // crescent, so they can stay on screen much deeper into the ladder.
+  const sagittaLabels = interpolate(gap, [18, 22], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const edgeLabels = interpolate(gap, [8, 10], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -31,75 +58,85 @@ export const SagittaLoupe: React.FC<{
       </defs>
       <circle cx={cx} cy={cy} r={r} fill={PALETTE.paper} opacity={0.96} />
       <g clipPath="url(#sagitta-clip)">
-        <rect
-          x={cx - r}
-          y={cy - r}
-          width={r * 2}
-          height={r * 2}
-          fill={PALETTE.paper}
-          opacity={0.9}
+        <line
+          x1={x1}
+          y1={yChord}
+          x2={leftX}
+          y2={belowY}
+          stroke={PALETTE.ink}
+          strokeWidth={3.2}
+          strokeLinecap="round"
+        />
+        <line
+          x1={x2}
+          y1={yChord}
+          x2={rightX}
+          y2={belowY}
+          stroke={PALETTE.ink}
+          strokeWidth={3.2}
+          strokeLinecap="round"
         />
         <path
-          d={`M ${cx - half} ${cy + 5} Q ${cx} ${cy - 7} ${cx + half} ${cy + 5}`}
+          d={`M ${x1} ${yChord} A ${R} ${R} 0 0 1 ${x2} ${yChord}`}
           fill="none"
           stroke={PALETTE.ink}
           strokeWidth={3.2}
         />
         <line
-          x1={cx - half}
-          y1={cy + gap}
-          x2={cx + half}
-          y2={cy + gap}
+          x1={x1}
+          y1={yChord}
+          x2={x2}
+          y2={yChord}
           stroke={PALETTE.ochreDeep}
           strokeWidth={3}
         />
         <line
           x1={cx}
-          y1={cy}
+          y1={apexY}
           x2={cx}
-          y2={cy + gap}
+          y2={yChord}
           stroke={PALETTE.inkSoft}
           strokeWidth={1.3}
         />
         <path
-          d={`M ${cx - 5} ${cy + 7} L ${cx} ${cy} L ${cx + 5} ${cy + 7}`}
+          d={`M ${cx - 5} ${apexY + 7} L ${cx} ${apexY} L ${cx + 5} ${apexY + 7}`}
           fill="none"
           stroke={PALETTE.inkSoft}
           strokeWidth={1.3}
         />
         <path
-          d={`M ${cx - 5} ${cy + gap - 7} L ${cx} ${cy + gap} L ${cx + 5} ${cy + gap - 7}`}
+          d={`M ${cx - 5} ${yChord - 7} L ${cx} ${yChord} L ${cx + 5} ${yChord - 7}`}
           fill="none"
           stroke={PALETTE.inkSoft}
           strokeWidth={1.3}
         />
         <text
           x={cx + 12}
-          y={cy + gap / 2 + 5}
+          y={(apexY + yChord) / 2 + 5}
           fontFamily={FONTS.serif}
           fontSize={17}
           fill={PALETTE.inkSoft}
-          opacity={labels}
+          opacity={sagittaLabels}
         >
           矢高
         </text>
         <text
-          x={cx - half + 8}
-          y={cy - 16}
+          x={x1 + 40}
+          y={apexY - 8}
           fontFamily={FONTS.serif}
           fontSize={17}
           fill={PALETTE.ink}
-          opacity={labels}
+          opacity={edgeLabels}
         >
           弧
         </text>
         <text
-          x={cx - half + 8}
-          y={cy + gap + 25}
+          x={x1 + 8}
+          y={yChord + 26}
           fontFamily={FONTS.serif}
           fontSize={17}
           fill={PALETTE.ochreDeep}
-          opacity={labels}
+          opacity={edgeLabels}
         >
           弦
         </text>
@@ -113,17 +150,25 @@ export const SagittaLoupe: React.FC<{
         strokeWidth={1.6}
         opacity={0.5}
       />
-      <text
-        x={cx}
-        y={cy + r + 28}
-        textAnchor="middle"
-        fontFamily={FONTS.serif}
-        fontSize={19}
-        letterSpacing={2}
-        fill={PALETTE.inkFaint}
+      <g
+        transform={`translate(${cx} ${cy + r + 32}) scale(${1 + 0.07 * pop})`}
       >
-        放大示意 · {n} 边
-      </text>
+        <text
+          textAnchor="middle"
+          fontFamily={FONTS.serif}
+          fontSize={18}
+          letterSpacing={2}
+          fill={PALETTE.inkFaint}
+        >
+          <tspan fontSize={15} fill={PALETTE.inkFaint}>
+            局部示意
+          </tspan>
+          <tspan dx={8} fontSize={23} fill={PALETTE.seal}>
+            ×{zoom}
+          </tspan>
+          <tspan dx={8}>· {n} 边</tspan>
+        </text>
+      </g>
     </g>
   );
 };

@@ -6,8 +6,9 @@ import { FONTS, PALETTE } from "../lib/theme";
 export const Hud: React.FC<{
   frame: number;
   sideCount: number | null;
-}> = ({ frame, sideCount }) => {
-  const opacity = enter(frame, HITS.hexagon, 10);
+  fade?: number;
+}> = ({ frame, sideCount, fade = 1 }) => {
+  const opacity = enter(frame, HITS.hexagon, 10) * fade;
 
   return (
     <div
